@@ -36,7 +36,6 @@ typedef struct tasklet_struct       zt_tasklet;
 #define zt_inline                   __always_inline
 
 #define zt_strchr                   strchr
-#define zt_strncpy                  strncpy
 #define zt_strncmp                  strncmp
 #define zt_strcmp                   strcmp
 #define zt_memcpy                   memcpy
@@ -49,6 +48,21 @@ typedef struct tasklet_struct       zt_tasklet;
 #define zt_sprintf                  sprintf
 #define zt_strncat                  strncat
 #define zt_snprintf                 snprintf
+
+/* strncpy() is gone in newer kernels; keep its zero-padding semantics. */
+static inline char *zt_strncpy(char *dest, const char *src, size_t n)
+{
+    char *d = dest;
+
+    while (n--)
+    {
+        *d = *src;
+        if (*src)
+            src++;
+        d++;
+    }
+    return dest;
+}
 
 
 #define zt_kzalloc(sz)              kzalloc(sz, in_interrupt()? GFP_ATOMIC : GFP_KERNEL)
